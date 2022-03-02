@@ -15,11 +15,11 @@ RUN apk add --no-cache \
     unzip=6.0-r9 \
     go=1.17.4-r0
 
-ENV USER=builder
+ENV USER=vpn
 RUN adduser --disabled-password --gecos '' $USER
 
 WORKDIR "/home/$USER"
-USER $USER:$USER
+USER "$USER:$USER"
 
 # Patch & build OpenVPN
 ENV OPENVPN_VERSION=2.5.1
@@ -30,23 +30,21 @@ RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v$OPENVPN_VERSION.zip" -
 
 COPY --chown=$USER:$USER "openvpn-v$OPENVPN_VERSION-aws.patch" openvpn/aws.patch
 
-WORKDIR /home/$USER/openvpn
+WORKDIR "/home/$USER/openvpn"
 RUN patch -p1 < aws.patch \
     && autoreconf -ivf \
     && ./configure \
     && make
 
 # Build aws-vpn-client
-
-# Set necessary environmet variables for build
 # CGO_ENABLED=0 for static linking
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
 
-RUN mkdir /home/$USER/aws-vpn-client
-WORKDIR /home/$USER/aws-vpn-client
+RUN mkdir "/home/$USER/aws-vpn-client"
+WORKDIR "/home/$USER/aws-vpn-client"
 
 # Copy and download dependency using go mod
 COPY --chown=$USER:$USER go.mod go.sum ./
@@ -56,7 +54,5 @@ RUN go mod download
 COPY --chown=$USER:$USER main.go main.go
 COPY --chown=$USER:$USER pkg pkg
 
-WORKDIR /home/$USER
-COPY --chown=$USER:$USER entrypoint-make.sh entrypoint.sh
-
-ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
+WORKDIR "/home/$USER"
+ENTRYPOINT ["/bin/bash", "./build/make.sh"]

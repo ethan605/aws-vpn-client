@@ -6,4 +6,28 @@ services:
       context: .
       dockerfile: Dockerfile-make
     volumes:
-      - ./linux:/home/builder/linux
+      - ./build:/home/vpn/build
+    entrypoint: /bin/bash
+  connect:
+    container_name: aws-vpn-client_connect
+    build:
+      context: .
+      dockerfile: Dockerfile-connect
+    environment:
+      - CHALLENGE_URL_COOKIE
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/net/tun
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+    ports:
+      - 35001:35001
+      - 3128:3128
+      - 2222:22
+    volumes:
+      - ./build:/home/vpn/build
+    entrypoint: /bin/bash
+    #stdin_open: true
+    #tty: true
