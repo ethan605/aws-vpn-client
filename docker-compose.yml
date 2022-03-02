@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  make:
+    container_name: aws-vpn-client_make
+    build:
+      context: .
+      dockerfile: Dockerfile-make
+    volumes:
+      - ./linux:/home/builder/linux
