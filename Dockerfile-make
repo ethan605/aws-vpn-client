@@ -5,6 +5,7 @@ RUN apk add --no-cache \
     autoconf=2.71-r0 \
     automake=1.16.4-r1 \
     curl=7.80.0-r0 \
+    go=1.17.4-r0 \
     libtool=2.4.6-r7 \
     linux-headers=5.10.41-r0 \
     linux-pam-dev=1.5.2-r0 \
@@ -12,8 +13,7 @@ RUN apk add --no-cache \
     make=4.3-r0 \
     openssl-dev=1.1.1l-r8 \
     patch=2.7.6-r7 \
-    unzip=6.0-r9 \
-    go=1.17.4-r0
+    unzip=6.0-r9
 
 ENV USER=vpn
 RUN adduser --disabled-password --gecos '' $USER

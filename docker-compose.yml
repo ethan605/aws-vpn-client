@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile-make
     volumes:
       - ./build:/home/vpn/build
-    entrypoint: /bin/bash
+    #entrypoint: /bin/bash
   connect:
     container_name: aws-vpn-client_connect
     build:
@@ -28,6 +28,6 @@ services:
       - 2222:22
     volumes:
       - ./build:/home/vpn/build
-    entrypoint: /bin/bash
+    #entrypoint: /bin/bash
     #stdin_open: true
     #tty: true
