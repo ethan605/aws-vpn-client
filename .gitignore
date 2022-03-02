@@ -18,3 +18,5 @@ saml-response.txt
 authorized_keys
 *.log
 .env
+build/aws-vpn-client
+build/openvpn
