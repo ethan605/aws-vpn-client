@@ -83,14 +83,15 @@ The `aws-vpn-client` CLI runs in 3 phases:
 `aws-vpn-client` accepts these flags:
 
 ```
-  -config string
-    	path to OpenVPN config (default "./ovpn.conf")
   -ovpn string
-    	path to OpenVPN binary (default "./openvpn")
+      path to OpenVPN binary (default "./openvpn")
+  -config string
+      path to OpenVPN config (default "./ovpn.conf")
   -on-challenge string
-    	auto (follow and parse challenge URL) or listen (spawn a SAML server and wait) (default "listen")
+      "auto" (follow and parse challenge URL) or "listen" (spawn a SAML server and wait)
+      (default "listen")
   -debug
-      debug mode
+      debug mode (default false)
 ```
 
 ## Automatically resolve challenge URL (experimental feature)
