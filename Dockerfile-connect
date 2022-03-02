@@ -17,7 +17,6 @@ RUN apk add --no-cache \
 
 ENV USER=vpn
 
-# hadolint ignore=DL4006
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
     && chmod ug=r,o=- "/etc/sudoers.d/$USER" \
     && adduser --disabled-password --gecos '' "$USER" \
@@ -26,10 +25,12 @@ RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
 
-COPY --chown=$USER:$USER linux/aws-vpn-client linux/openvpn linux/ovpn.conf linux/client.up ./
-COPY --chown=$USER:$USER linux/authorized_keys .ssh/
+COPY --chown=$USER:$USER build/aws-vpn-client build/openvpn ./
+COPY --chown=$USER:$USER data/client.up data/ovpn.conf ./
+COPY --chown=$USER:$USER data/authorized_keys .ssh/
 
 RUN chmod u+x client.up && echo "up /home/$USER/client.up" >> ovpn.conf \
     && chmod u=rw,og=- .ssh/authorized_keys
 
-ENTRYPOINT ["/bin/bash", "./build/connect.sh"]
+COPY --chown=$USER:$USER entrypoint-connect.sh entrypoint.sh
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
