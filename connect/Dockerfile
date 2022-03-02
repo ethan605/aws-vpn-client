@@ -15,6 +15,9 @@ RUN apk add --no-cache \
     && dropbearkey -t ecdsa -f /etc/dropbear/dropbear_ecdsa_host_key \
     && dropbearkey -t ed25519 -f /etc/dropbear/dropbear_ed25519_host_key
 
+COPY update-resolve-conf /usr/bin/
+RUN chmod +x /usr/bin/update-resolve-conf
+
 ENV USER=vpn
 
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
@@ -25,12 +28,9 @@ RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
 
-COPY --chown=$USER:$USER build/aws-vpn-client build/openvpn ./
-COPY --chown=$USER:$USER data/client.up data/ovpn.conf ./
-COPY --chown=$USER:$USER data/authorized_keys .ssh/
+COPY --chown=$USER:$USER authorized_keys .ssh/
 
-RUN chmod u+x client.up && echo "up /home/$USER/client.up" >> ovpn.conf \
+RUN echo "up /usr/bin/update-resolve-conf" >> ovpn.conf \
     && chmod u=rw,og=- .ssh/authorized_keys
 
-COPY --chown=$USER:$USER entrypoint-connect.sh entrypoint.sh
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]

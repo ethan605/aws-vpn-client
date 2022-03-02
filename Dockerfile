@@ -55,6 +55,6 @@ COPY --chown=$USER:$USER main.go main.go
 COPY --chown=$USER:$USER pkg pkg
 
 WORKDIR "/home/$USER"
-COPY --chown=$USER:$USER entrypoint-make.sh entrypoint.sh
+COPY --chown=$USER:$USER entrypoint.sh entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]

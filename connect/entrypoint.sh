@@ -6,4 +6,4 @@ echo "Starting squid..."
 sudo /usr/sbin/squid
 
 # Connect to VPN
-./aws-vpn-client -ovpn ./openvpn -config ./ovpn.conf -on-challenge=auto -debug
+./build/aws-vpn-client -ovpn ./build/openvpn -config ./ovpn.conf -on-challenge=listen -debug

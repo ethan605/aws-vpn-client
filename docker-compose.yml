@@ -2,17 +2,13 @@ version: "3.8"
 services:
   make:
     container_name: aws-vpn-client_make
-    build:
-      context: .
-      dockerfile: Dockerfile-make
+    build: .
     volumes:
       - ./build:/home/vpn/build
-    #entrypoint: /bin/bash
   connect:
     container_name: aws-vpn-client_connect
     build:
-      context: .
-      dockerfile: Dockerfile-connect
+      context: ./connect
     environment:
       - CHALLENGE_URL_COOKIE
     cap_add:
@@ -28,6 +24,7 @@ services:
       - 2222:22
     volumes:
       - ./build:/home/vpn/build
+      - ./connect:/home/vpn
     #entrypoint: /bin/bash
     #stdin_open: true
     #tty: true
