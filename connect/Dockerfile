@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     && dropbearkey -t ecdsa -f /etc/dropbear/dropbear_ecdsa_host_key \
     && dropbearkey -t ed25519 -f /etc/dropbear/dropbear_ed25519_host_key
 
-COPY update-resolve-conf /usr/bin/
+COPY connect/update-resolve-conf /usr/bin/
 RUN chmod +x /usr/bin/update-resolve-conf
 
 ENV USER=vpn
@@ -28,9 +28,13 @@ RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
 
-COPY --chown=$USER:$USER authorized_keys .ssh/
+COPY --chown=$USER:$USER build .
+COPY --chown=$USER:$USER connect .
 
-RUN echo "up /usr/bin/update-resolve-conf" >> ovpn.conf \
+RUN chmod +x update-resolve-conf \
+    && echo "up /home/$USER/update-resolve-conf" >> ovpn.conf \
+    && mkdir -p .ssh \
+    && mv ./authorized_keys .ssh/ \
     && chmod u=rw,og=- .ssh/authorized_keys
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]

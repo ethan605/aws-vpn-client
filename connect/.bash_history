@@ -6,3 +6,5 @@ ls -lah
 ls -lah /usr/bin/update-resolve-conf 
 vi /usr/bin/update-resolve-conf 
 exit
+ls -lah build
+exit

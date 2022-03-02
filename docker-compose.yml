@@ -8,7 +8,8 @@ services:
   connect:
     container_name: aws-vpn-client_connect
     build:
-      context: ./connect
+      context: ./
+      dockerfile: ./connect/Dockerfile
     environment:
       - CHALLENGE_URL_COOKIE
     cap_add:
@@ -22,9 +23,6 @@ services:
       - 35001:35001
       - 3128:3128
       - 2222:22
-    volumes:
-      - ./build:/home/vpn/build
-      - ./connect:/home/vpn
     #entrypoint: /bin/bash
     #stdin_open: true
     #tty: true
