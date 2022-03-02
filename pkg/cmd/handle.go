@@ -48,7 +48,7 @@ func ParseConfigs() Cmd {
 	flag.StringVar(
 		&configs.OnChallenge,
 		"on-challenge",
-		"",
+		"listen",
 		"auto (follow and parse challenge URL) or listen (spawn a SAML server and wait)",
 	)
 	flag.StringVar(&configs.OvpnBin, "ovpn", defaultOvpnBin, "path to OpenVPN binary")
@@ -271,15 +271,11 @@ func (c *cmdConfigs) listenForSAMLResponse(challengeURL string, cleanupCh <-chan
 	server := samlserver.NewServer()
 	go server.Run(cleanupCh)
 
-	err := c.openChallengeURL(challengeURL)
-	if err != nil {
-		return "", err
-	}
-
+	c.openChallengeURL(challengeURL)
 	return <-server.SAMLResponseCh(), nil
 }
 
-func (c *cmdConfigs) openChallengeURL(challengeURL string) error {
+func (c *cmdConfigs) openChallengeURL(challengeURL string) {
 	openCmd := "xdg-open"
 
 	if runtime.GOOS == "darwin" {
@@ -288,10 +284,8 @@ func (c *cmdConfigs) openChallengeURL(challengeURL string) error {
 
 	cmd := exec.Command(openCmd, challengeURL)
 	if err := cmd.Start(); err != nil {
-		return err
+		log.Printf("Failed to open challenge URL: %s\n", err.Error())
 	}
-
-	return nil
 }
 
 func (c *cmdConfigs) readLines(reader io.Reader, stdoutCh chan<- string) []string {
