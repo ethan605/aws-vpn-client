@@ -23,6 +23,7 @@ RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v$OPENVPN_VERSION.zip" -
     && unzip openvpn.zip \
     && mv "openvpn-$OPENVPN_VERSION" openvpn
 
+WORKDIR /
 COPY "openvpn-v$OPENVPN_VERSION-aws.patch" openvpn/aws.patch
 
 WORKDIR /openvpn

@@ -21,6 +21,7 @@ RUN chmod +x /usr/bin/vpn-client.up /usr/bin/vpn-client.down
 
 ENV USER=vpn
 
+# hadolint ignore=DL4006
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
     && chmod ug=r,o=- "/etc/sudoers.d/$USER" \
     && adduser --disabled-password --gecos '' "$USER" \
