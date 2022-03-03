@@ -71,7 +71,7 @@ The `aws-vpn-client` CLI runs in 3 phases:
     SIGTERM[soft,auth-failure] received, process exiting
     ```
 
-  Notes that in the `AUTH: received control message: ...` line, we have `CRV1:R:<VPN_SID>:<CHALLENGE_URL>`.
+    Notes that in the `AUTH: received control message: ...` line, we have `CRV1:R:<VPN_SID>:<CHALLENGE_URL>`.
 
 2. Open your default browser to visit the `CHALLENGE_URL`.
 
@@ -93,13 +93,13 @@ The `aws-vpn-client` CLI runs in 3 phases:
     	print more logs
 ```
 
-Without flags, it's also possible to configure via environment variables
-(will be overriden by runtime flags):
+When any flags are absent, the client will lookup for environment variables
+before fallback to the default value:
 
-- `AWS_VPN_OVPN_BIN` for `-ovpn` flag
-- `AWS_VPN_OVPN_CONF` for `-config` flag
-- `AWS_VPN_ON_CHALLENGE` for `-on-challenge` flag
-- `AWS_VPN_VERBOSE` for `-verbose` flag. This accepts `1, t, T, TRUE, true, True` as `true`, otherwise `false`.
+- `AWS_VPN_OVPN_BIN` for `-ovpn`.
+- `AWS_VPN_OVPN_CONF` for `-config`.
+- `AWS_VPN_ON_CHALLENGE` for `-on-challenge`.
+- `AWS_VPN_VERBOSE` for `-verbose`. This accepts `1, t, T, TRUE, true, True` as `true`, otherwise `false`.
 
 ## Automatically resolve challenge URL (experimental feature)
 
