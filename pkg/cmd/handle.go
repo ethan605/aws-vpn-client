@@ -44,22 +44,22 @@ func ParseConfigs() Cmd {
 		stdoutCh: make(chan string),
 	}
 
-	flag.BoolVar(&configs.DebugMode, "debug", false, "debug mode")
+	flag.BoolVar(&configs.Verbose, "verbose", getBoolEnvOrDefault("AWS_VPN_VERBOSE", false), "print more logs")
 	flag.StringVar(
 		&configs.OnChallenge,
 		"on-challenge",
-		"listen",
+		getStringEnvOrDefault("AWS_VPN_ON_CHALLENGE", "listen"),
 		"auto (follow and parse challenge URL) or listen (spawn a SAML server and wait)",
 	)
-	flag.StringVar(&configs.OvpnBin, "ovpn", defaultOvpnBin, "path to OpenVPN binary")
-	flag.StringVar(&configs.OvpnConf, "config", defaultOvpnConf, "path to OpenVPN config")
+	flag.StringVar(&configs.OvpnBin, "ovpn", getStringEnvOrDefault("AWS_VPN_OVPN_BIN", defaultOvpnBin), "path to OpenVPN binary")
+	flag.StringVar(&configs.OvpnConf, "config", getStringEnvOrDefault("AWS_VPN_OVPN_CONF", defaultOvpnConf), "path to OpenVPN config")
 	flag.Parse()
 
 	return configs
 }
 
 type cmdConfigs struct {
-	DebugMode   bool
+	Verbose     bool
 	OnChallenge string
 	OvpnBin     string
 	OvpnConf    string
@@ -188,7 +188,7 @@ func (c *cmdConfigs) digRemoteIP() string {
 
 	remoteServer := strings.Replace(string(stdout), "\n", "", -1)
 
-	if c.DebugMode {
+	if c.Verbose {
 		log.Println("Remote server:", remoteServer)
 	}
 
@@ -206,7 +206,7 @@ func (c *cmdConfigs) digRemoteIP() string {
 		log.Fatal(err)
 	}
 
-	if c.DebugMode {
+	if c.Verbose {
 		log.Println("Remote IP:", remoteIP)
 	}
 
@@ -303,7 +303,7 @@ func (c *cmdConfigs) readLines(reader io.Reader, stdoutCh chan<- string) []strin
 		if stdoutCh != nil {
 			stdoutCh <- lineStr
 
-			if c.DebugMode {
+			if c.Verbose {
 				log.Println(lineStr)
 			}
 		}

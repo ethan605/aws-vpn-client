@@ -84,15 +84,22 @@ The `aws-vpn-client` CLI runs in 3 phases:
 
 ```
   -ovpn string
-      path to OpenVPN binary (default "./openvpn")
+    	path to OpenVPN binary (default "./openvpn")
   -config string
-      path to OpenVPN config (default "./ovpn.conf")
+    	path to OpenVPN config (default "./ovpn.conf")
   -on-challenge string
-      "auto" (follow and parse challenge URL) or "listen" (spawn a SAML server and wait)
-      (default "listen")
-  -debug
-      debug mode (default false)
+    	auto (follow and parse challenge URL) or listen (spawn a SAML server and wait) (default "follow")
+  -verbose
+    	print more logs
 ```
+
+Without flags, it's also possible to configure via environment variables
+(will be overriden by runtime flags):
+
+- `AWS_VPN_OVPN_BIN` for `-ovpn` flag
+- `AWS_VPN_OVPN_CONF` for `-config` flag
+- `AWS_VPN_ON_CHALLENGE` for `-on-challenge` flag
+- `AWS_VPN_VERBOSE` for `-verbose` flag. This accepts `1, t, T, TRUE, true, True` as `true`, otherwise `false`.
 
 ## Automatically resolve challenge URL (experimental feature)
 

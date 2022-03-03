@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"net"
+	"os"
+	"strconv"
 )
 
 func generateRandHex() (string, error) {
@@ -23,4 +25,22 @@ func lookupRemoteIP(remoteAddress string) (string, error) {
 	}
 
 	return remoteIPs[0].String(), nil
+}
+
+func getBoolEnvOrDefault(envName string, defaultValue bool) bool {
+	if envValue, ok := os.LookupEnv(envName); ok {
+		if value, err := strconv.ParseBool(envValue); err == nil {
+			return value
+		}
+	}
+
+	return defaultValue
+}
+
+func getStringEnvOrDefault(envName string, defaultValue string) string {
+	if value, ok := os.LookupEnv(envName); ok {
+		return value
+	}
+
+	return defaultValue
 }

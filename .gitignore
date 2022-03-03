@@ -17,6 +17,5 @@
 saml-response.txt
 build/*
 connect/authorized_keys
-connect/ovpn.conf
 *.log
 .env
