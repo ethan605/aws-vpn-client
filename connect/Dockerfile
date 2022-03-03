@@ -35,6 +35,6 @@ COPY --chown=$USER:$USER connect/authorized_keys .ssh/
 
 RUN echo "up /usr/bin/vpn-client.up" >> ovpn.conf \
     && echo "down /usr/bin/vpn-client.down" >> ovpn.conf \
-    && chmod u=rw,og=- .ssh/authorized_keys
+    && chmod u=rw,og=- .ssh/authorized_key
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
