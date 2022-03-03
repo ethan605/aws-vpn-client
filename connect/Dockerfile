@@ -29,11 +29,9 @@ RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
 
-COPY --chown=$USER:$USER connect/ovpn.conf connect/entrypoint.sh ./
-COPY --chown=$USER:$USER connect/authorized_keys .ssh/
+COPY --chown=$USER:$USER connect/authorized_keys .ssh/authorized_keys
+RUN chmod u=rw,og=- .ssh/authorized_keys
 
-RUN echo "up /usr/bin/vpn-client.up" >> ovpn.conf \
-    && echo "down /usr/bin/vpn-client.down" >> ovpn.conf \
-    && chmod u=rw,og=- .ssh/authorized_keys
+COPY --chown=$USER:$USER connect/entrypoint.sh entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]

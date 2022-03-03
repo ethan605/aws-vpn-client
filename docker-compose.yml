@@ -30,6 +30,3 @@ services:
       - 35001:35001
       - 3128:3128
       - 2222:22
-    #entrypoint: /bin/bash
-    #stdin_open: true
-    #tty: true

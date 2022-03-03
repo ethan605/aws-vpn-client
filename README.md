@@ -115,3 +115,103 @@ To solve this, you can try `-on-challenge=auto` with some prerequisites:
   of the `CHALLENGE_URL`. Normally it'll be a piece of `cookie`.
 - Either export or pass the necessary `cookie` value to the env var `CHALLENGE_URL_COOKIE`.
 - Run with `./aws-vpn-client <... other flags> -on-challenge=auto`
+
+## Connect to VPN from Docker
+
+Using `connect` service in `docker-compose.yml`, you can spawn a Docker container to isolate the VPN connection.
+This is convenient when you don't want to mess up with the host's networks.
+
+Caveats: this is a very opinionated way to use the VPN from Docker. Customise if needed and use it at your own risks!
+
+### Dependencies
+
+The `connect` service installs several additional packages:
+
+- `dropbear` to serve the container as a proxy SSH server.
+  SSH connections can be routed via `localhost:2222` with `ProxyCommand` config in the host `~/.ssh/config`:
+
+  ```config
+  Host *
+    # ...
+
+  Host your.private.server
+    ProxyCommand ssh -q vpn@localhost -p 2222 nc %h %p
+  ```
+- `squid` to serve the container as a proxy HTTP/HTTPS server via `localhost:3128`.
+
+### Preparation
+
+- Use `docker compose up make` to prepare `openvpn` and `aws-vpn-client` in `build/` folder.
+- Make a `connect/authorized_keys` file with the content of your `~/.ssh/id_*.pub`.
+  This is for `dropbear` to authorise the SSH connections from the host.
+
+### Configuration
+
+The `entrypoint.sh` of `connect` comes with no flags for `aws-vpn-client` for the ease of
+options control via environment variables.
+
+```yaml
+# ...
+  connect:
+    # ...
+    environment:
+      - AWS_VPN_OVPN_BIN=./build/openvpn
+      - AWS_VPN_OVPN_CONF=./build/ovpn.conf
+      - AWS_VPN_ON_CHALLENGE=auto
+      - AWS_VPN_VERBOSE=true
+      - CHALLENGE_URL_COOKIE
+    # ...
+```
+
+You need to modify the template `connect/ovpn.conf` and place the complete `ovpn.conf` file to `build/ovpn.conf`
+(the `build` folder is git-ignored.) Remember to:
+- Update the correct `remote` server.
+- Update the correct CA certificates in `<ca></ca>` block.
+- Append to the end of the file:
+  ```config
+  up /usr/bin/vpn-client.up
+  down /usr/bin/vpn-client.down
+  ```
+  (those scripts are properly copied and chmoded in the container during build).
+
+Depending on your preferences, set `AWS_VPN_ON_CHALLENGE=auto` along with a valid `CHALLENGE_URL_COOKIE` env var,
+or use `AWS_VPN_ON_CHALLENGE=listen` as an easier setup.
+
+### Running
+
+- Use `docker compose up -d connect` to connect in detached mode.
+- Use `docker compose logs -f connect` to view output from `aws-vpn-client`.
+- If running in `AWS_VPN_ON_CHALLENGE=listen` mode,
+  run `docker compose logs --tail 2 connect | grep -Eo 'https://.+' | xargs -I {} xdg-open {}`
+  (or `docker compose logs --tail 2 connect | grep -Eo 'https://.+' | xargs -n1 open` on macOS)
+  to visit the challenge URL automatically.
+
+### Caveats and troubleshootings
+
+- Sometimes `squid` won't boot up after the container was stopped and started again.
+  Run `docker compose exec connect sudo /usr/sbin/squid` to manually start it,
+  or simply remove the dead container and spawn a new one.
+- Each time image gets fresh built (without caches), it'll generate a new set of host keys
+  (placed in `/etc/dropbear/` in the container). If you have run the container before
+  and now trying to do a proxied SSH connection, you might get blocked with a message:
+  ```
+  kex_exchange_identification: Connection closed by remote host
+  Connection closed by UNKNOWN port 65535
+  ```
+  if you try to `ssh vpn@localhost -p 2222`:
+  ```
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+  Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+  It is also possible that a host key has just been changed.
+  The fingerprint for the ED25519 key sent by the remote host is
+  SHA256:<some-key>.
+  Please contact your system administrator.
+  Add correct host key in /home/username/.ssh/known_hosts to get rid of this message.
+  Offending ED25519 key in /home/username/.ssh/known_hosts:xx
+  Host key for [localhost]:2222 has changed and you have requested strict checking.
+  Host key verification failed.
+  ```
+  then simply remove the old `[localhost]:2222` line in `~/.ssh/known_hosts` to generate a new one.
