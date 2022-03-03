@@ -5,4 +5,4 @@ set -Eeuo pipefail
 echo "Starting squid..."
 sudo /usr/sbin/squid
 
-./aws-vpn-client
+./build/aws-vpn-client

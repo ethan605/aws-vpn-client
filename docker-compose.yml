@@ -11,7 +11,7 @@ services:
       context: ./
       dockerfile: ./connect/Dockerfile
     environment:
-      - AWS_VPN_OVPN_BIN=./openvpn
+      - AWS_VPN_OVPN_BIN=./build/openvpn
       - AWS_VPN_OVPN_CONF=./build/ovpn.conf
       - AWS_VPN_ON_CHALLENGE=auto
       - AWS_VPN_VERBOSE=true
@@ -22,7 +22,8 @@ services:
     devices:
       - /dev/net/tun
     sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv6.conf.default.disable_ipv6=0
     volumes:
       - ./build:/home/vpn/build
     ports:

@@ -29,7 +29,6 @@ RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
 
-COPY --chown=$USER:$USER build/aws-vpn-client build/openvpn ./
 COPY --chown=$USER:$USER connect/ovpn.conf connect/entrypoint.sh ./
 COPY --chown=$USER:$USER connect/authorized_keys .ssh/
 
