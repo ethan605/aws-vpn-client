@@ -104,8 +104,10 @@ else
   cat /etc/resolv.conf
 fi
 
-echo "Starting dropbear..." \
-  && /usr/sbin/dropbear -jks \
-  && echo "Restarting squid..." \
-  && /usr/sbin/squid -k reconfigure \
-  && exit 0
+echo "Starting dropbear..."
+/usr/sbin/dropbear -jks
+
+echo "Restarting squid..."
+/usr/sbin/squid -k reconfigure
+
+exit 0
