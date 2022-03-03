@@ -3,7 +3,7 @@ set -Eeuo pipefail
 OUT_DIR=build
 OUT_BIN=aws-vpn-client
 
-rm -rf "$OUT_DIR/*"
+rm -rf "$OUT_DIR/{$OUT_BIN,openvpn}"
 cp openvpn/src/openvpn/openvpn "$OUT_DIR/"
 
 cd "$OUT_BIN"
