@@ -24,8 +24,7 @@ ENV USER=vpn
 # hadolint ignore=DL4006
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
     && chmod ug=r,o=- "/etc/sudoers.d/$USER" \
-    && adduser --disabled-password --gecos '' "$USER" \
-    && echo "$USER:$USER!" | chpasswd
+    && adduser --disabled-password --gecos '' "$USER"
 
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
