@@ -1,0 +1,20 @@
+name: Hadolint
+
+on: [push]
+
+jobs:
+  hadolint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Dockerfile - make
+        uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./Dockerfile
+
+      - name: Dockerfile - connect
+        uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./connect/Dockerfile
