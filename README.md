@@ -11,6 +11,12 @@ heavily based on [an existing solution](https://smallhacks.wordpress.com/2020/07
 - A suitable DNS solution for your system. For instance,
   [Arch Linux mentioned a custom script maintained by OpenVPN](https://wiki.archlinux.org/title/OpenVPN#DNS).
   This should be updated to `ovpn.conf` file.
+- Enable Docker BuildKit:
+
+  ```shell
+  export DOCKER_BUILDKIT=1
+  export COMPOSE_DOCKER_CLI_BUILD=1
+  ```
 
 ## Configuration
 

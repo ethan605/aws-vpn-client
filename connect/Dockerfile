@@ -15,9 +15,7 @@ RUN apk add --no-cache \
     && dropbearkey -t ecdsa -f /etc/dropbear/dropbear_ecdsa_host_key \
     && dropbearkey -t ed25519 -f /etc/dropbear/dropbear_ed25519_host_key
 
-COPY connect/vpn-client.up /usr/bin/vpn-client.up
-COPY connect/vpn-client.down /usr/bin/vpn-client.down
-RUN chmod +x /usr/bin/vpn-client.up /usr/bin/vpn-client.down
+COPY --chmod=+x connect/vpn-client.up connect/vpn-client.down /usr/bin/
 
 ARG USER=vpn
 
@@ -29,9 +27,7 @@ RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
 WORKDIR "/home/$USER"
 USER "$USER:$USER"
 
-COPY --chown=$USER:$USER connect/authorized_keys .ssh/authorized_keys
-RUN chmod u=rw,og=- .ssh/authorized_keys
-
+COPY --chown=$USER:$USER --chmod=u=rw,og=- connect/authorized_keys .ssh/authorized_keys
 COPY --chown=$USER:$USER connect/entrypoint.sh entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
