@@ -1,7 +1,8 @@
 # AWS VPN Client
 
 A CLI and Docker solution to enable Linux distros to connect to AWS VPN infrastructure with SAML SSO,
-based on [an online solution](https://smallhacks.wordpress.com/2020/07/08/aws-client-vpn-internals/).
+heavily based on [an existing solution](https://smallhacks.wordpress.com/2020/07/08/aws-client-vpn-internals/)
+([repo](https://github.com/samm-git/aws-vpn-client)).
 
 ## Prerequisites
 
@@ -53,7 +54,7 @@ with `-debug` flag provided, you might get something like this:
 [timestamp] Successfully connected
 ```
 
-otherwise, it failed if you get:
+otherwise, it's failed if you get:
 
 ```
 [timestamp] Connection rejected, please re-run to try again
@@ -127,7 +128,7 @@ Caveats: this is a very opinionated way to use the VPN from Docker. Customise if
 
 The `connect` service installs several additional packages:
 
-- `dropbear` to serve the container as a proxy SSH server.
+- [`dropbear`](https://matt.ucc.asn.au/dropbear/dropbear.html) to serve the container as a proxy SSH server.
   SSH connections can be routed via `localhost:2222` with `ProxyCommand` config in the host `~/.ssh/config`:
 
   ```config
@@ -135,9 +136,10 @@ The `connect` service installs several additional packages:
     # ...
 
   Host your.private.server
-    ProxyCommand ssh -q vpn@localhost -p 2222 nc %h %p
+    ProxyCommand ssh vpn@localhost -p 2222 nc %h %p
   ```
-- `squid` to serve the container as a proxy HTTP/HTTPS server via `localhost:3128`.
+
+- [`squid`](http://www.squid-cache.org/) to serve the container as a proxy HTTP/HTTPS server via `localhost:3128`.
 
 ### Preparation
 
@@ -181,10 +183,13 @@ or use `AWS_VPN_ON_CHALLENGE=listen` as an easier setup.
 
 - Use `docker compose up -d connect` to connect in detached mode.
 - Use `docker compose logs -f connect` to view output from `aws-vpn-client`.
-- If running in `AWS_VPN_ON_CHALLENGE=listen` mode,
-  run `docker compose logs --tail 2 connect | grep -Eo 'https://.+' | xargs -I {} xdg-open {}`
-  (or `docker compose logs --tail 2 connect | grep -Eo 'https://.+' | xargs -n1 open` on macOS)
-  to visit the challenge URL automatically.
+- If connecting in `AWS_VPN_ON_CHALLENGE=listen` mode, run:
+
+  ```shell
+  $ docker compose logs --tail 2 connect | grep -Eo 'https://.+' | xargs -I {} xdg-open {}
+  ```
+
+  (or `xargs -n1 open` on macOS) to visit the challenge URL automatically.
 
 ### Caveats and troubleshootings
 
@@ -195,23 +200,20 @@ or use `AWS_VPN_ON_CHALLENGE=listen` as an easier setup.
   (placed in `/etc/dropbear/` in the container). If you have run the container before
   and now trying to do a proxied SSH connection, you might get blocked with a message:
   ```
-  kex_exchange_identification: Connection closed by remote host
-  Connection closed by UNKNOWN port 65535
-  ```
-  if you try to `ssh vpn@localhost -p 2222`:
-  ```
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   @    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
   Someone could be eavesdropping on you right now (man-in-the-middle attack)!
   It is also possible that a host key has just been changed.
-  The fingerprint for the ED25519 key sent by the remote host is
+  The fingerprint for the ECDSA key sent by the remote host is
   SHA256:<some-key>.
   Please contact your system administrator.
   Add correct host key in /home/username/.ssh/known_hosts to get rid of this message.
-  Offending ED25519 key in /home/username/.ssh/known_hosts:xx
+  Offending ECDSA key in /home/username/.ssh/known_hosts:30
   Host key for [localhost]:2222 has changed and you have requested strict checking.
   Host key verification failed.
+  kex_exchange_identification: Connection closed by remote host
+  Connection closed by UNKNOWN port 65535
   ```
   then simply remove the old `[localhost]:2222` line in `~/.ssh/known_hosts` to generate a new one.
