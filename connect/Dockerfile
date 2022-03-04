@@ -15,7 +15,8 @@ RUN apk add --no-cache \
     && dropbearkey -t ecdsa -f /etc/dropbear/dropbear_ecdsa_host_key \
     && dropbearkey -t ed25519 -f /etc/dropbear/dropbear_ed25519_host_key
 
-COPY --chmod=+x connect/vpn-client.up connect/vpn-client.down /usr/bin/
+COPY connect/vpn-client.up connect/vpn-client.down /usr/bin/
+RUN chmod +x /usr/bin/vpn-client.up /usr/bin/vpn-client.down
 
 ARG USER=vpn
 

@@ -17,7 +17,7 @@ RUN apk add --no-cache \
     unzip=6.0-r9
 
 # Patch & build OpenVPN
-ARG OPENVPN_VERSION=2.5.1
+ARG OPENVPN_VERSION=2.5.5
 
 RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v$OPENVPN_VERSION.zip" -o openvpn.zip \
     && unzip openvpn.zip \
