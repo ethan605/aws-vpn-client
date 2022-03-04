@@ -35,7 +35,7 @@ Then in `./build` folder there should be 2 binaries `openvpn` and `aws-vpn-clien
 Run:
 
 ```shell
-$ ./build/aws-vpn-client -ovpn path/to/openvpn -config /path/to/openvpn.conf
+$ ./build/aws-vpn-client -ovpn ./build/openvpn -config /path/to/openvpn.conf
 ```
 
 For all the supported flags, consult [Options for aws-vpn-client](#options-for-aws-vpn-client).
@@ -51,7 +51,7 @@ You'll be successfully connected once you get something like this:
 [timestamp] Successfully connected
 ```
 
-with `-debug` flag provided, you might get something like this:
+with `-verbose` flag provided, you might get something like this:
 
 ```
 ...
@@ -95,7 +95,7 @@ The `aws-vpn-client` CLI runs in 3 phases:
   -config string
     	path to OpenVPN config (default "./ovpn.conf")
   -on-challenge string
-    	auto (follow and parse challenge URL) or listen (spawn a SAML server and wait) (default "follow")
+    	"auto" (follow and parse challenge URL) or "listen" (spawn a SAML server and wait) (default "listen")
   -verbose
     	print more logs
 ```

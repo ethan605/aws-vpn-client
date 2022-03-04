@@ -19,8 +19,9 @@ import (
 )
 
 const (
-	defaultOvpnBin  = "./openvpn"
-	defaultOvpnConf = "./ovpn.conf"
+	defaultOvpnBin     = "./openvpn"
+	defaultOvpnConf    = "./ovpn.conf"
+	defaultOnChallenge = "listen"
 )
 
 var (
@@ -48,7 +49,7 @@ func ParseConfigs() Cmd {
 	flag.StringVar(
 		&configs.OnChallenge,
 		"on-challenge",
-		getStringEnvOrDefault("AWS_VPN_ON_CHALLENGE", "listen"),
+		getStringEnvOrDefault("AWS_VPN_ON_CHALLENGE", defaultOnChallenge),
 		"auto (follow and parse challenge URL) or listen (spawn a SAML server and wait)",
 	)
 	flag.StringVar(&configs.OvpnBin, "ovpn", getStringEnvOrDefault("AWS_VPN_OVPN_BIN", defaultOvpnBin), "path to OpenVPN binary")
