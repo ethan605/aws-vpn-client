@@ -179,7 +179,7 @@ You need to modify the template `connect/ovpn.conf` and place the complete `ovpn
 Depending on your preferences, set `AWS_VPN_ON_CHALLENGE=auto` along with a valid `CHALLENGE_URL_COOKIE` env var,
 or use `AWS_VPN_ON_CHALLENGE=listen` as an easier setup.
 
-### Running
+### Connecting
 
 - Use `docker compose up -d connect` to connect in detached mode.
 - Use `docker compose logs -f connect` to view output from `aws-vpn-client`.
@@ -190,6 +190,33 @@ or use `AWS_VPN_ON_CHALLENGE=listen` as an easier setup.
   ```
 
   (or `xargs -n1 open` on macOS) to visit the challenge URL automatically.
+
+### Using the VPN network from other Docker containers
+
+#### `docker run`
+
+Append `--net=container:aws-client-vpn_connect` to `docker run` command.
+
+#### `docker compose`
+
+In `docker-compose.yml`, modify `build` config into something like this:
+
+```yaml
+  # ...
+  container_name: # ...
+  build:
+    context: .
+    network: "container:aws-client-vpn_connect"
+```
+
+If your container doesn't map ports to the host machine, then append:
+
+```yaml
+  # ...
+  build:
+    # ...
+  network_mode: "container:aws-client-vpn_connect"
+```
 
 ### Caveats and troubleshootings
 
