@@ -19,7 +19,7 @@ COPY connect/vpn-client.up /usr/bin/vpn-client.up
 COPY connect/vpn-client.down /usr/bin/vpn-client.down
 RUN chmod +x /usr/bin/vpn-client.up /usr/bin/vpn-client.down
 
-ENV USER=vpn
+ARG USER=vpn
 
 # hadolint ignore=DL4006
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER" \
