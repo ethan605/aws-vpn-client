@@ -135,14 +135,14 @@ Caveats: this is a very opinionated way to use the VPN from Docker. Customise if
 The `connect` service installs several additional packages:
 
 - [`dropbear`](https://matt.ucc.asn.au/dropbear/dropbear.html) to serve the container as a proxy SSH server.
-  SSH connections can be routed via `localhost:2222` with `ProxyCommand` config in the host `~/.ssh/config`:
+  SSH connections can be routed via `localhost:2222` with `ProxyJump` config in the host `~/.ssh/config`:
 
   ```config
   Host *
     # ...
 
   Host your.private.server
-    ProxyCommand ssh vpn@localhost -p 2222 nc %h %p
+    ProxyJump vpn@localhost:2222
   ```
 
 - [`squid`](http://www.squid-cache.org/) to serve the container as a proxy HTTP/HTTPS server via `localhost:3128`.

@@ -104,8 +104,10 @@ else
   cat /etc/resolv.conf
 fi
 
+# Start dropbear in background with
+# "Disable password logins" and "Allow remote hosts to connect to forwarded ports"
 echo "Starting dropbear..."
-/usr/sbin/dropbear -jks
+/usr/sbin/dropbear -sa
 
 echo "Restarting squid..."
 /usr/sbin/squid -k reconfigure
