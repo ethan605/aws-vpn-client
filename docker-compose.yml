@@ -1,12 +1,13 @@
 version: "3.8"
 services:
   make:
-    container_name: aws-vpn-client_make
+    image: aws-vpn-client_make
     build: .
     volumes:
       - .:/home/vpn/app
   connect:
-    container_name: aws-vpn-client_connect
+    image: aws-vpn-client_connect
+    container_name: aws-vpn
     build:
       context: ./
       dockerfile: ./connect/Dockerfile

@@ -12,7 +12,7 @@ RUN apk add --no-cache \
     linux-pam-dev=1.5.2-r0 \
     lzo-dev=2.10-r2 \
     make=4.3-r0 \
-    openssl-dev=1.1.1l-r8 \
+    openssl-dev=1.1.1n-r0 \
     patch=2.7.6-r7 \
     unzip=6.0-r9
 
