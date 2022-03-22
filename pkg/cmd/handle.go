@@ -21,17 +21,9 @@ import (
 const (
 	defaultOvpnBin     = "./openvpn"
 	defaultOvpnConf    = "./ovpn.conf"
+	defaultClientUp    = "./vpn-client.up"
+	defaultClientDown  = "./vpn-client.down"
 	defaultOnChallenge = "listen"
-)
-
-var (
-	whitelistedLogPrefixes = []string{
-		//"AUTH: Received control message: AUTH_FAILED,CRV1:R:",
-		//"net_addr_v4_add",
-		//"net_route_v4_add",
-		//"/sbin/route add -net",
-		//"Initialization Sequence Completed",
-	}
 )
 
 // Cmd provides methods to connect to VPN using OpenVPN
@@ -46,14 +38,16 @@ func ParseConfigs() Cmd {
 	}
 
 	flag.BoolVar(&configs.Verbose, "verbose", getBoolEnvOrDefault("AWS_VPN_VERBOSE", false), "print more logs")
+	flag.StringVar(&configs.OvpnBin, "ovpn", getStringEnvOrDefault("AWS_VPN_OVPN_BIN", defaultOvpnBin), "path to OpenVPN binary")
+	flag.StringVar(&configs.OvpnConf, "config", getStringEnvOrDefault("AWS_VPN_OVPN_CONF", defaultOvpnConf), "path to OpenVPN config")
+	flag.StringVar(&configs.ClientUp, "up", getStringEnvOrDefault("AWS_VPN_CLIENT_UP", defaultClientUp), "path to client up script")
+	flag.StringVar(&configs.ClientDown, "down", getStringEnvOrDefault("AWS_VPN_CLIENT_DOWN", defaultClientDown), "path to client down script")
 	flag.StringVar(
 		&configs.OnChallenge,
 		"on-challenge",
 		getStringEnvOrDefault("AWS_VPN_ON_CHALLENGE", defaultOnChallenge),
 		"auto (follow and parse challenge URL) or listen (spawn a SAML server and wait)",
 	)
-	flag.StringVar(&configs.OvpnBin, "ovpn", getStringEnvOrDefault("AWS_VPN_OVPN_BIN", defaultOvpnBin), "path to OpenVPN binary")
-	flag.StringVar(&configs.OvpnConf, "config", getStringEnvOrDefault("AWS_VPN_OVPN_CONF", defaultOvpnConf), "path to OpenVPN config")
 	flag.Parse()
 
 	return configs
@@ -64,6 +58,8 @@ type cmdConfigs struct {
 	OnChallenge string
 	OvpnBin     string
 	OvpnConf    string
+	ClientUp    string
+	ClientDown  string
 
 	stdoutCh chan string
 }
@@ -78,12 +74,6 @@ func (c *cmdConfigs) ConnectVPN() error {
 	go func() {
 		for {
 			line := <-c.stdoutCh
-
-			for _, prefix := range whitelistedLogPrefixes {
-				if strings.Contains(line, prefix) {
-					fmt.Println(line)
-				}
-			}
 
 			if strings.Contains(line, "Invalid username or password") {
 				log.Println("Connection rejected, please re-run to try again")
@@ -161,8 +151,8 @@ func (c *cmdConfigs) execOpenVPN(remoteIP string, password string, forChallengeU
 	userPass := fmt.Sprintf(`<( printf "%%s\n%%s\n" "%s" "%s" )`, "N/A", password)
 
 	openVPN := fmt.Sprintf(
-		`%s --config %s --remote %s %d --auth-user-pass %s`,
-		c.OvpnBin, c.OvpnConf, remoteIP, port, userPass,
+		`%s --config %s --remote %s %d --up %s --down %s --auth-user-pass %s`,
+		c.OvpnBin, c.OvpnConf, remoteIP, port, c.ClientUp, c.ClientDown, userPass,
 	)
 	cmd := exec.Command("bash", "-c", openVPN)
 

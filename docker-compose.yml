@@ -12,9 +12,11 @@ services:
       context: ./
       dockerfile: ./connect/Dockerfile
     environment:
+      - AWS_VPN_ON_CHALLENGE=auto
       - AWS_VPN_OVPN_BIN=./build/openvpn-musl
       - AWS_VPN_OVPN_CONF=./build/ovpn.conf
-      - AWS_VPN_ON_CHALLENGE=auto
+      - AWS_VPN_CLIENT_UP=/usr/bin/vpn-client.up
+      - AWS_VPN_CLIENT_DOWN=/usr/bin/vpn-client.down
       - AWS_VPN_VERBOSE=true
       - CHALLENGE_URL_COOKIE
     cap_add:
