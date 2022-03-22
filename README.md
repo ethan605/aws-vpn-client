@@ -94,6 +94,10 @@ The `aws-vpn-client` CLI runs in 3 phases:
     	path to OpenVPN binary (default "./openvpn")
   -config string
     	path to OpenVPN config (default "./ovpn.conf")
+  -up string
+    	path to client up script (default "./vpn-client.up")
+  -down string
+      path to client down script (default "./vpn-client.down")
   -on-challenge string
     	"auto" (follow and parse challenge URL) or "listen" (spawn a SAML server and wait) (default "listen")
   -verbose
@@ -105,6 +109,8 @@ before fallback to the default value:
 
 - `AWS_VPN_OVPN_BIN` for `-ovpn`.
 - `AWS_VPN_OVPN_CONF` for `-config`.
+- `AWS_VPN_CLIENT_UP` for `-up`.
+- `AWS_VPN_CLIENT_DOWN` for `-down`.
 - `AWS_VPN_ON_CHALLENGE` for `-on-challenge`.
 - `AWS_VPN_VERBOSE` for `-verbose`. This accepts `1, t, T, TRUE, true, True` as `true`, otherwise `false`.
 

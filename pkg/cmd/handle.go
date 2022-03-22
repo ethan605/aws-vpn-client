@@ -24,6 +24,7 @@ const (
 	defaultClientUp    = "./vpn-client.up"
 	defaultClientDown  = "./vpn-client.down"
 	defaultOnChallenge = "listen"
+	defaultVerbose     = false
 )
 
 // Cmd provides methods to connect to VPN using OpenVPN
@@ -37,7 +38,6 @@ func ParseConfigs() Cmd {
 		stdoutCh: make(chan string),
 	}
 
-	flag.BoolVar(&configs.Verbose, "verbose", getBoolEnvOrDefault("AWS_VPN_VERBOSE", false), "print more logs")
 	flag.StringVar(&configs.OvpnBin, "ovpn", getStringEnvOrDefault("AWS_VPN_OVPN_BIN", defaultOvpnBin), "path to OpenVPN binary")
 	flag.StringVar(&configs.OvpnConf, "config", getStringEnvOrDefault("AWS_VPN_OVPN_CONF", defaultOvpnConf), "path to OpenVPN config")
 	flag.StringVar(&configs.ClientUp, "up", getStringEnvOrDefault("AWS_VPN_CLIENT_UP", defaultClientUp), "path to client up script")
@@ -48,6 +48,7 @@ func ParseConfigs() Cmd {
 		getStringEnvOrDefault("AWS_VPN_ON_CHALLENGE", defaultOnChallenge),
 		"auto (follow and parse challenge URL) or listen (spawn a SAML server and wait)",
 	)
+	flag.BoolVar(&configs.Verbose, "verbose", getBoolEnvOrDefault("AWS_VPN_VERBOSE", defaultVerbose), "print more logs")
 	flag.Parse()
 
 	return configs
