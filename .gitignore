@@ -19,3 +19,4 @@ build/*
 connect/authorized_keys
 *.log
 .env
+.envrc
