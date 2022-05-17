@@ -28,15 +28,21 @@ To obtain both the CLI and the patched OpenVPN client, run:
 $ docker compose up make
 ```
 
-Then in `./build` folder there should be 2 binaries `openvpn` and `aws-vpn-client`.
+Then in `./build` folder there should be 3 binaries:
+
+- `openvpn-musl` for musl libc platforms.
+- `openvpn-glibc` for glibc platforms.
+- `aws-vpn-client`.
 
 ## Authenticate and connect to the VPN
 
 Run:
 
 ```shell
-$ ./build/aws-vpn-client -ovpn ./build/openvpn -config /path/to/openvpn.conf
+$ ./build/aws-vpn-client -ovpn ./build/your-openvpn-variant -config /path/to/openvpn.conf
 ```
+
+where `your-openvpn-variant` could be either `openvpn-musl` or `openvpn-glibc`
 
 For all the supported flags, consult [Options for aws-vpn-client](#options-for-aws-vpn-client).
 
@@ -169,7 +175,7 @@ options control via environment variables.
   connect:
     # ...
     environment:
-      - AWS_VPN_OVPN_BIN=./build/openvpn
+      - AWS_VPN_OVPN_BIN=./build/openvpn-musl
       - AWS_VPN_OVPN_CONF=./build/ovpn.conf
       - AWS_VPN_ON_CHALLENGE=auto
       - AWS_VPN_VERBOSE=true
@@ -234,7 +240,7 @@ If your container doesn't map ports to the host machine, then append:
 
 - Sometimes `squid` won't boot up after the container was stopped and started again.
   Run `docker compose exec connect sudo /usr/sbin/squid` to manually start it,
-  or simply remove the dead container and spawn a new one.
+  or simply remove the stalled container (`docker compose down -t0`) and spawn a new one.
 - Each time image gets fresh built (without caches), it'll generate a new set of host keys
   (placed in `/etc/dropbear/` in the container). If you have run the container before
   and now trying to do a proxied SSH connection, you might get blocked with a message:

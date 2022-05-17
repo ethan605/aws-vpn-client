@@ -27,6 +27,13 @@ services:
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
       - net.ipv6.conf.default.disable_ipv6=0
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 512m
+        reservations:
+          memory: 256m
     volumes:
       - ./build:/home/vpn/build
     ports:
