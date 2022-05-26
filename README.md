@@ -161,9 +161,8 @@ The `connect` service installs several additional packages:
 
 ### Preparation
 
-- Use `docker compose up make` to prepare `openvpn` and `aws-vpn-client` in `build/` folder.
-- Make a `connect/authorized_keys` file with the content of your `~/.ssh/id_*.pub`.
-  This is for `dropbear` to authorise the SSH connections from the host.
+- Use `docker compose up make` to prepare `openvpn-musl` (because the Docker image is based on `alpine`)
+  and `aws-vpn-client` in `build/` folder.
 
 ### Configuration
 
@@ -177,9 +176,11 @@ options control via environment variables.
     environment:
       - AWS_VPN_OVPN_BIN=./build/openvpn-musl
       - AWS_VPN_OVPN_CONF=./build/ovpn.conf
-      - AWS_VPN_ON_CHALLENGE=auto
+      - AWS_VPN_CLIENT_UP=/usr/bin/vpn-client.up
+      - AWS_VPN_CLIENT_DOWN=/usr/bin/vpn-client.down
       - AWS_VPN_VERBOSE=true
-      - CHALLENGE_URL_COOKIE
+      # - AWS_VPN_ON_CHALLENGE=your-preference
+      # - CHALLENGE_URL_COOKIE=your-preference
     # ...
 ```
 
@@ -187,12 +188,6 @@ You need to modify the template `connect/ovpn.conf` and place the complete `ovpn
 (the `build` folder is git-ignored.) Remember to:
 - Update the correct `remote` server.
 - Update the correct CA certificates in `<ca></ca>` block.
-- Append to the end of the file:
-  ```config
-  up /usr/bin/vpn-client.up
-  down /usr/bin/vpn-client.down
-  ```
-  (those scripts are properly copied and chmoded in the container during build).
 
 Depending on your preferences, set `AWS_VPN_ON_CHALLENGE=auto` along with a valid `CHALLENGE_URL_COOKIE` env var,
 or use `AWS_VPN_ON_CHALLENGE=listen` as an easier setup.
