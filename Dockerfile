@@ -39,15 +39,15 @@ RUN apt-get update \
       autoconf=2.69-14 \
       automake=1:1.16.3-2 \
       ca-certificates=20210119 \
-      curl=7.74.0-1.3+deb11u1 \
+      curl=7.74.0-1.3+deb11u3 \
       liblz4-dev=1.9.3-2 \
       liblzo2-dev=2.10-2 \
       libpam0g-dev=1.4.0-9+deb11u1 \
-      libssl-dev=1.1.1k-1+deb11u2 \
+      libssl-dev=1.1.1n-0+deb11u3 \
       libtool=2.4.6-15 \
       make=4.3-4.1 \
       patch=2.7.6-7 \
-      unzip=6.0-26 \
+      unzip=6.0-26+deb11u1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
