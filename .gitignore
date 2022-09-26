@@ -14,7 +14,6 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-saml-response.txt
 build/*
 connect/authorized_keys
 *.log
