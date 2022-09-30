@@ -39,7 +39,12 @@ Then in `./build` folder there should be 3 binaries:
 Run:
 
 ```shell
-$ ./build/aws-vpn-client -ovpn ./build/your-openvpn-variant -config /path/to/openvpn.conf
+$ ./build/aws-vpn-client
+  -ovpn ./build/your-openvpn-variant \
+  -config /path/to/openvpn.conf \
+  -up /path/to/client-up-script \
+  -down /path/to/client-down-script \
+  -verbose        # optional, mostly for debugging purposes
 ```
 
 where `your-openvpn-variant` could be either `openvpn-musl` or `openvpn-glibc`
