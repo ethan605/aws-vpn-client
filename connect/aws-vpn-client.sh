@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-go run main.go \
+./build/aws-vpn-client \
   -ovpn ./build/openvpn-glibc \
   -config ./build/ovpn.conf \
   -verbose \
