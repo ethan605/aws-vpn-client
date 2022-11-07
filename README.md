@@ -11,12 +11,6 @@ heavily based on [an existing solution](https://smallhacks.wordpress.com/2020/07
 - A suitable DNS solution for your system. For instance,
   [Arch Linux mentioned a custom script maintained by OpenVPN](https://wiki.archlinux.org/title/OpenVPN#DNS).
   This should be updated to `ovpn.conf` file.
-- Enable Docker BuildKit:
-
-  ```shell
-  export DOCKER_BUILDKIT=1
-  export COMPOSE_DOCKER_CLI_BUILD=1
-  ```
 
 ## Configuration
 
@@ -39,15 +33,14 @@ Then in `./build` folder there should be 3 binaries:
 Run:
 
 ```shell
-$ ./build/aws-vpn-client
-  -ovpn ./build/your-openvpn-variant \
-  -config /path/to/openvpn.conf \
-  -up /path/to/client-up-script \
-  -down /path/to/client-down-script \
-  -verbose        # optional, mostly for debugging purposes
+$ ./connect/aws-vpn-client.sh
+  -ovpn ./build/openvpn-<variant> \       # optional, default to './build/openvpn-glibc'
+  -config /path/to/openvpn.conf \         # optional, default to './build/ovpn.conf'
+  -up /path/to/client-up-script \         # optional, default to './connect/vpn-client.up'
+  -down /path/to/client-down-script       # optional, default to './connect/vpn-client.down'
 ```
 
-where `your-openvpn-variant` could be either `openvpn-musl` or `openvpn-glibc`
+where `<variant>` could be either `musl` or `glibc`
 
 For all the supported flags, consult [Options for aws-vpn-client](#options-for-aws-vpn-client).
 
@@ -105,10 +98,6 @@ The `aws-vpn-client` CLI runs in 3 phases:
     	path to OpenVPN binary (default "./openvpn")
   -config string
     	path to OpenVPN config (default "./ovpn.conf")
-  -up string
-    	path to client up script (default "./vpn-client.up")
-  -down string
-      path to client down script (default "./vpn-client.down")
   -on-challenge string
     	"auto" (follow and parse challenge URL) or "listen" (spawn a SAML server and wait) (default "listen")
   -verbose
@@ -120,8 +109,6 @@ before fallback to the default value:
 
 - `AWS_VPN_OVPN_BIN` for `-ovpn`.
 - `AWS_VPN_OVPN_CONF` for `-config`.
-- `AWS_VPN_CLIENT_UP` for `-up`.
-- `AWS_VPN_CLIENT_DOWN` for `-down`.
 - `AWS_VPN_ON_CHALLENGE` for `-on-challenge`.
 - `AWS_VPN_VERBOSE` for `-verbose`. This accepts `1, t, T, TRUE, true, True` as `true`, otherwise `false`.
 
@@ -181,8 +168,6 @@ options control via environment variables.
     environment:
       - AWS_VPN_OVPN_BIN=./build/openvpn-musl
       - AWS_VPN_OVPN_CONF=./build/ovpn.conf
-      - AWS_VPN_CLIENT_UP=/usr/bin/vpn-client.up
-      - AWS_VPN_CLIENT_DOWN=/usr/bin/vpn-client.down
       - AWS_VPN_VERBOSE=true
       # - AWS_VPN_ON_CHALLENGE=your-preference
       # - CHALLENGE_URL_COOKIE=your-preference
