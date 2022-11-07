@@ -97,19 +97,11 @@ else
   if [ -e /etc/resolv.conf ] ; then
     cp /etc/resolv.conf /etc/resolv.conf.ovpnsave
   fi
-  printf "%s\n" "${out}" > /etc/resolv.conf
+  printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n%s\n" "${out}" > /etc/resolv.conf
   chmod 644 /etc/resolv.conf
 
   echo "/etc/resolv.conf updated:"
   cat /etc/resolv.conf
 fi
-
-# Start dropbear in background with
-# "Disable password logins" and "Allow remote hosts to connect to forwarded ports"
-echo "Starting dropbear..."
-/usr/sbin/dropbear -sa
-
-echo "Restarting squid..."
-/usr/sbin/squid -k reconfigure
 
 exit 0

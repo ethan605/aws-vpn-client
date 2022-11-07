@@ -34,10 +34,10 @@ Run:
 
 ```shell
 $ ./connect/aws-vpn-client.sh
-  -ovpn ./build/openvpn-<variant> \       # optional, default to './build/openvpn-glibc'
-  -config /path/to/openvpn.conf \         # optional, default to './build/ovpn.conf'
-  -up /path/to/client-up-script \         # optional, default to './connect/vpn-client.up'
-  -down /path/to/client-down-script       # optional, default to './connect/vpn-client.down'
+  --ovpn ./build/openvpn-<variant> \      # optional, default to './build/openvpn-glibc'
+  --config /path/to/openvpn.conf \        # optional, default to './build/ovpn.conf'
+  --up /path/to/client-up-script \        # optional, default to './connect/vpn-client.up'
+  --down /path/to/client-down-script      # optional, default to './connect/vpn-client.down'
 ```
 
 where `<variant>` could be either `musl` or `glibc`

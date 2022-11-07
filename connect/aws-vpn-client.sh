@@ -10,7 +10,7 @@ function parse_option_arg() {
   if [[ -n "${2-}" ]] && [[ ${2:0:1} != "-" ]]; then
     echo "$2"
   else
-    print_help_message "Argument for $1 is missing"
+    echo "Argument for $1 is missing"
     exit 1
   fi
 }
@@ -18,19 +18,19 @@ function parse_option_arg() {
 function parse_args() {
   while (( "$#" )); do
     case "$1" in
-      -ovpn)
+      --ovpn)
         OPENVPN_BIN=$(parse_option_arg "$@")
         shift 2
         ;;
-      -conf)
+      --conf)
         OPENVPN_CONF=$(parse_option_arg "$@")
         shift 2
         ;;
-      -up)
+      --up)
         VPN_CLIENT_UP=$(parse_option_arg "$@")
         shift 2
         ;;
-      -down)
+      --down)
         VPN_CLIENT_DOWN=$(parse_option_arg "$@")
         shift 2
         ;;

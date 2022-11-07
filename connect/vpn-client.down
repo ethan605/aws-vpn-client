@@ -48,11 +48,4 @@ elif [ -e /etc/resolv.conf.ovpnsave ] ; then
   rm -f /etc/resolv.conf.ovpnsave
 fi
 
-echo "Shutting down squid..."
-/usr/sbin/squid -k shutdown
-pkill -f squid
-
-echo "Shutting down dropbear..."
-pkill -f dropbear
-
 exit 0
