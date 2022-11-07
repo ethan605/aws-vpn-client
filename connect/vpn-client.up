@@ -97,7 +97,7 @@ else
   if [ -e /etc/resolv.conf ] ; then
     cp /etc/resolv.conf /etc/resolv.conf.ovpnsave
   fi
-  printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n%s\n" "${out}" > /etc/resolv.conf
+  printf "%s\n" "${out}" > /etc/resolv.conf
   chmod 644 /etc/resolv.conf
 
   echo "/etc/resolv.conf updated:"
