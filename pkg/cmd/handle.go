@@ -21,8 +21,6 @@ import (
 const (
 	defaultOvpnBin     = "./openvpn"
 	defaultOvpnConf    = "./ovpn.conf"
-	defaultClientUp    = "./vpn-client.up"
-	defaultClientDown  = "./vpn-client.down"
 	defaultOnChallenge = "listen"
 	defaultVerbose     = false
 )
@@ -40,8 +38,6 @@ func ParseConfigs() Cmd {
 
 	flag.StringVar(&configs.OvpnBin, "ovpn", getStringEnvOrDefault("AWS_VPN_OVPN_BIN", defaultOvpnBin), "path to OpenVPN binary")
 	flag.StringVar(&configs.OvpnConf, "config", getStringEnvOrDefault("AWS_VPN_OVPN_CONF", defaultOvpnConf), "path to OpenVPN config")
-	flag.StringVar(&configs.ClientUp, "up", getStringEnvOrDefault("AWS_VPN_CLIENT_UP", defaultClientUp), "path to client up script")
-	flag.StringVar(&configs.ClientDown, "down", getStringEnvOrDefault("AWS_VPN_CLIENT_DOWN", defaultClientDown), "path to client down script")
 	flag.StringVar(
 		&configs.OnChallenge,
 		"on-challenge",
@@ -59,8 +55,6 @@ type cmdConfigs struct {
 	OnChallenge string
 	OvpnBin     string
 	OvpnConf    string
-	ClientUp    string
-	ClientDown  string
 
 	stdoutCh chan string
 }
@@ -148,18 +142,20 @@ func (c *cmdConfigs) getChallengeData(remoteIP string) (string, string, error) {
 }
 
 func (c *cmdConfigs) execOpenVPN(remoteIP string, password string, forChallengeURL bool) ([]string, error) {
+	if !forChallengeURL {
+		fmt.Println("N/A")
+		fmt.Println(password)
+		return []string{}, nil
+	}
+
 	port := 443
 	userPass := fmt.Sprintf(`<( printf "%%s\n%%s\n" "%s" "%s" )`, "N/A", password)
 
 	openVPN := fmt.Sprintf(
-		`%s --config %s --remote %s %d --up %s --down %s --auth-user-pass %s`,
-		c.OvpnBin, c.OvpnConf, remoteIP, port, c.ClientUp, c.ClientDown, userPass,
+		`%s --config %s --remote %s %d --auth-user-pass %s`,
+		c.OvpnBin, c.OvpnConf, remoteIP, port, userPass,
 	)
 	cmd := exec.Command("bash", "-c", openVPN)
-
-	if !forChallengeURL {
-		cmd = exec.Command("sudo", "bash", "-c", openVPN)
-	}
 
 	stdout, _ := cmd.StdoutPipe()
 	if err := cmd.Start(); err != nil {
