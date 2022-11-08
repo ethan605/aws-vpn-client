@@ -33,7 +33,7 @@ Then in `./build` folder there should be 3 binaries:
 Run:
 
 ```shell
-$ ./aws-vpn-client.sh
+$ ./connect.sh
   --cmd ./build/aws-vpn-client \          # optional, default to './build/aws-vpn-client'
   --ovpn ./build/openvpn-<variant> \      # optional, default to './build/openvpn-glibc'
   --config /path/to/openvpn.conf \        # optional, default to './build/ovpn.conf'
