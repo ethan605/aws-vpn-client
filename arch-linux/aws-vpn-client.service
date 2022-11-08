@@ -1,0 +1,12 @@
+[Unit]
+Description=Connect to AWS VPN infrastructure with SAML SSO
+
+[Service]
+Type=simple
+StandardOutput=journal
+ExecStart=/usr/lib/aws-vpn-client/connect.sh --cmd /usr/lib/aws-vpn-client/aws-vpn-client --ovpn /usr/lib/aws-vpn-client/openvpn --up /usr/lib/aws-vpn-client/vpn-client.up --down /usr/lib/aws-vpn-client/vpn-client.down --conf /home/${USER}/.config/aws-vpn-client/ovpn.conf
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=default.target

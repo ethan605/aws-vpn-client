@@ -1,0 +1,33 @@
+# Maintainer: Thanh Nguyen <xtnguyen605@gmail.com>
+pkgname=aws-vpn-client
+pkgver=0.9.0
+pkgrel=1
+pkgdesc="A CLI solution to enable Linux distros to connect to AWS VPN infrastructure with SAML SSO"
+arch=('any')
+url="https://github.com/ethan605/aws-vpn-client"
+license=('GPL 3.0')
+_bin=aws-vpn-client
+source=(
+  "${_bin}"
+  "${_bin}.service"
+  "connect.sh"
+  "openvpn"
+  "vpn-client.up"
+  "vpn-client.down"
+)
+
+sha512sums=(
+  "f814a51b24435a91196ef925e83f4e35bd0b11014c4a790ad344ac14ee84e738d3b6bc81b9efa4b0fa21014c53353898eb366508e538496ed5ccd012328a239d"
+  "796d2361f2229f428a36ef05835081f8566d879013359d083ca1c240d1a30a851e89f5c5375e496eafa93da2385cbeee42d6e4738a6194d6e7b212b3f8d21efe"
+  "6b58babd2d54c2937c419c1a7d0ef063279ffcfe351aa68104820e67224f61f1af9187e84929a531c32d6ee89669448001aa4c5723d36e9715c30a2e44eac179"
+  "f411accf9a5bd886bf7ba8cd57494d01cd37601a104af356cbbfb08e2843d72a19484733841f7eb5af2f2355b79aaf1a51b5938658da85c401e0cf9415c89c85"
+  "412a13b8c2b25f3b916f9d096f2b54ae9d54092fddf0396b9ed56af7b1879eb77c3f9eb6e16c25447bb6642982a532d266ef05dd33d39ee17474f5e8d487a077"
+  "658afc43a3c3e18bf64196e470ec13137080180dbcf2f527689a15b589e5b2b1ef036143592ea5b6c7b45108927977683fb0f90e0355f3b9c2d314d33c15f673"
+)
+
+package() {
+  mkdir -p "$pkgdir/usr/lib/${_bin}"
+  cd "$srcdir"
+  install -Dm555 -t "$pkgdir/usr/lib/${_bin}" "${_bin}" connect.sh openvpn vpn-client.up vpn-client.down
+  install -Dm444 -t "$pkgdir/usr/lib/systemd/user" "${_bin}.service"
+}
