@@ -33,7 +33,8 @@ Then in `./build` folder there should be 3 binaries:
 Run:
 
 ```shell
-$ ./connect/aws-vpn-client.sh
+$ ./aws-vpn-client.sh
+  --cmd ./build/aws-vpn-client \          # optional, default to './build/aws-vpn-client'
   --ovpn ./build/openvpn-<variant> \      # optional, default to './build/openvpn-glibc'
   --config /path/to/openvpn.conf \        # optional, default to './build/ovpn.conf'
   --up /path/to/client-up-script \        # optional, default to './connect/vpn-client.up'
@@ -126,3 +127,35 @@ To solve this, you can try `-on-challenge=auto` with some prerequisites:
   of the `CHALLENGE_URL`. Normally it'll be a piece of `cookie`.
 - Either export or pass the necessary `cookie` value to the env var `CHALLENGE_URL_COOKIE`.
 - Run with `./aws-vpn-client <... other flags> -on-challenge=auto`
+
+# On Arch Linux with `systemd`
+
+Under `arch-linux` folder, there's 2 files that enable Arch Linux users to integrate `aws-vpn-client` with `systemd`:
+
+- `PKGBUILD`: to install `aws-vpn-client` as a `pacman` package.
+- `aws-vpn-client.service` to run as a `--user` service.
+
+## Install
+
+Just run `make`, it'll prepare, install & clean-up the build files
+
+## Configuration
+
+- Before running, copy (or symlink) your OpenVPN config file `ovpn.conf` to `/home/$USER/.config/aws-vpn-client/` directory.
+  The `connect.sh` script will look for the config file at this location.
+- Because OpenVPN needs `sudo` privilege, and it (`sudo`) doesn't work with `--user` systemd service,
+  you need to whitelist it in `/etc/sudoers` with something like:
+  ```
+  <username> ALL=NOPASSWD: /usr/lib/aws-vpn-client/openvpn
+  ```
+
+## Running
+
+Now you can connect to AWS VPN using:
+
+```shell
+$ systemctl --user start aws-vpn-client
+```
+
+The service will be auto-reconnecting (with a delay of 1s) whenever the `connect.sh` fails,
+e.g. when `openvpn` receives `SIGUSR1` from suspend.

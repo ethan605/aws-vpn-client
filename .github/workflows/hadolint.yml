@@ -13,8 +13,3 @@ jobs:
         uses: hadolint/hadolint-action@v1.6.0
         with:
           dockerfile: ./Dockerfile
-
-      - name: Dockerfile - connect
-        uses: hadolint/hadolint-action@v1.6.0
-        with:
-          dockerfile: ./connect/Dockerfile
