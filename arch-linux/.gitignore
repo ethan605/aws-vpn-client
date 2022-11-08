@@ -1,0 +1,5 @@
+connect.sh
+aws-vpn-client
+openvpn
+vpn-client.*
+*.pkg.tar.zst
