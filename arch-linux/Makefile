@@ -6,6 +6,9 @@ prepare:
 		cp ../build/openvpn-glibc openvpn; \
 		cp ../connect/vpn-client.* .
 
+sha512sums: prepare
+	@sha512sum aws-vpn-client{,.service} connect.sh openvpn vpn-client.{up,down}
+
 install:
 	@makepkg --cleanbuild --noconfirm --syncdeps --install --needed --clean --asdeps
 
