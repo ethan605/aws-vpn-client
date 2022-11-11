@@ -2,6 +2,19 @@ version: "3.8"
 services:
   make:
     image: aws-vpn-client_make
-    build: .
+    build:
+      context: .
+      args:
+        - OPENVPN_VERSION
     volumes:
       - .:/home/vpn/app
+  gen-patch:
+    image: aws-vpn-client_gen-patch
+    build:
+      context: .
+      dockerfile: Dockerfile-gen-patch
+    environment:
+      - FROM_VERSION
+      - TO_VERSION
+    volumes:
+      - ./patches:/home/vpn/patches

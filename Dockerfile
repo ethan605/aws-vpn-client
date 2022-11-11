@@ -16,14 +16,14 @@ RUN apk add --no-cache \
     unzip=6.0-r9
 
 # Patch & build OpenVPN
-ARG OPENVPN_VERSION=2.5.7
+ARG OPENVPN_VERSION=2.5.8
 
-RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v$OPENVPN_VERSION.zip" -o openvpn.zip \
+RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v${OPENVPN_VERSION}.zip" -o openvpn.zip \
     && unzip openvpn.zip \
-    && mv "openvpn-$OPENVPN_VERSION" openvpn
+    && mv "openvpn-${OPENVPN_VERSION}" openvpn
 
 WORKDIR /
-COPY "openvpn-v$OPENVPN_VERSION-aws.patch" openvpn/aws.patch
+COPY "patches/openvpn-v${OPENVPN_VERSION}-aws.patch" openvpn/aws.patch
 
 WORKDIR /openvpn
 RUN patch -p1 < aws.patch \
@@ -52,14 +52,14 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Patch & build OpenVPN
-ARG OPENVPN_VERSION=2.5.7
+ARG OPENVPN_VERSION=2.5.8
 
-RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v$OPENVPN_VERSION.zip" -o openvpn.zip \
+RUN curl -L "https://github.com/OpenVPN/openvpn/archive/v${OPENVPN_VERSION}.zip" -o openvpn.zip \
     && unzip openvpn.zip \
-    && mv "openvpn-$OPENVPN_VERSION" openvpn
+    && mv "openvpn-${OPENVPN_VERSION}" openvpn
 
 WORKDIR /
-COPY "openvpn-v$OPENVPN_VERSION-aws.patch" openvpn/aws.patch
+COPY "patches/openvpn-v${OPENVPN_VERSION}-aws.patch" openvpn/aws.patch
 
 WORKDIR /openvpn
 RUN patch -p1 < aws.patch \
@@ -68,11 +68,11 @@ RUN patch -p1 < aws.patch \
     && make
 
 # Build aws-vpn-client
-FROM alpine:3.15
+FROM alpine:3.16
 
 RUN apk add --no-cache \
-    bash=5.1.16-r0 \
-    go=1.17.10-r0
+    bash=5.1.16-r2 \
+    go=1.18.7-r0
 
 # CGO_ENABLED=0 for static linking
 ENV GO111MODULE=on \
@@ -81,23 +81,17 @@ ENV GO111MODULE=on \
     GOARCH=amd64
 
 ARG USER=vpn
-RUN adduser --disabled-password --gecos '' $USER \
+RUN adduser --disabled-password --gecos '' ${USER} \
     && mkdir -p app
 
-WORKDIR "/home/$USER/app"
-USER "$USER:$USER"
+WORKDIR "/home/${USER}"
+USER ${USER}:${USER}
 
-# Copy and download dependency using go mod
-COPY --chown=$USER:$USER go.mod go.sum ./
-RUN go mod download
+# Copy entrypoint script into the container
+COPY --chown=$USER:$USER entrypoints/make.sh entrypoint.sh
 
-# Copy the code into the container
-COPY --chown=$USER:$USER main.go main.go
-COPY --chown=$USER:$USER pkg pkg
-COPY --chown=$USER:$USER entrypoint.sh entrypoint.sh
-
-WORKDIR "/home/$USER"
+# Copy openvpn binaries into the container
 COPY --from=ovpn-musl --chown=$USER:$USER openvpn/src/openvpn/openvpn openvpn-musl
 COPY --from=ovpn-glibc --chown=$USER:$USER openvpn/src/openvpn/openvpn openvpn-glibc
 
-ENTRYPOINT ["/bin/bash", "./app/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
