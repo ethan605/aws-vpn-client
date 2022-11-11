@@ -13,3 +13,8 @@ jobs:
         uses: hadolint/hadolint-action@v1.6.0
         with:
           dockerfile: ./Dockerfile
+
+      - name: Dockerfile - make
+        uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./Dockerfile-gen-patch
