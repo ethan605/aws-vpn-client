@@ -166,5 +166,3 @@ $ systemctl --user start aws-vpn-client
 
 The service will be auto-reconnecting (with a delay of 1s) whenever the `connect.sh` fails,
 e.g. when `openvpn` receives `SIGUSR1` from suspend.
-
-# Gen
