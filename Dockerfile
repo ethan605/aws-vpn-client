@@ -1,19 +1,19 @@
 # Build openvpn with musl libc
-FROM alpine:3.16 as ovpn-musl
+FROM alpine:3.17 as ovpn-musl
 
 RUN apk add --no-cache \
-    autoconf=2.71-r0 \
-    automake=1.16.5-r0 \
-    curl=7.83.1-r4 \
-    go=1.18.7-r0 \
-    libtool=2.4.7-r0 \
-    linux-headers=5.16.7-r1 \
-    linux-pam-dev=1.5.2-r0 \
+    autoconf=2.71-r1 \
+    automake=1.16.5-r1 \
+    curl=8.0.1-r0 \
+    go=1.19.9-r0 \
+    libtool=2.4.7-r1 \
+    linux-headers=5.19.5-r0 \
+    linux-pam-dev=1.5.2-r1 \
     lzo-dev=2.10-r3 \
-    make=4.3-r0 \
-    openssl-dev=1.1.1s-r0 \
-    patch=2.7.6-r7 \
-    unzip=6.0-r9
+    make=4.3-r1 \
+    openssl-dev=3.0.8-r4 \
+    patch=2.7.6-r9 \
+    unzip=6.0-r13
 
 # Patch & build OpenVPN
 ARG OPENVPN_VERSION=2.5.8
@@ -39,11 +39,11 @@ RUN apt-get update \
       autoconf=2.69-14 \
       automake=1:1.16.3-2 \
       ca-certificates=20210119 \
-      curl=7.74.0-1.3+deb11u3 \
+      curl=7.74.0-1.3+deb11u7 \
       liblz4-dev=1.9.3-2 \
       liblzo2-dev=2.10-2 \
       libpam0g-dev=1.4.0-9+deb11u1 \
-      libssl-dev=1.1.1n-0+deb11u3 \
+      libssl-dev=1.1.1n-0+deb11u4 \
       libtool=2.4.6-15 \
       make=4.3-4.1 \
       patch=2.7.6-7 \

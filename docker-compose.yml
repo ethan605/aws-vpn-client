@@ -1,7 +1,7 @@
-version: "3.8"
+version: "3.9"
 services:
   make:
-    image: aws-vpn-client_make
+    image: aws-vpn-client:make
     build:
       context: .
       args:
@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/home/vpn/app
   gen-patch:
-    image: aws-vpn-client_gen-patch
+    image: aws-vpn-client:gen-patch
     build:
       context: .
       dockerfile: Dockerfile-gen-patch

@@ -16,17 +16,39 @@ heavily based on [an existing solution](https://smallhacks.wordpress.com/2020/07
 
 This solution requires a modified version of OpenVPN client.
 
+### Make the binaries
+
 To obtain both the CLI and the patched OpenVPN client, run:
 
 ```shell
-$ docker compose up make
+$ OPENVPN_VERSION=<latest_supported_version> docker compose up make
 ```
+
+List of `<latest_supported_version>`'s is available at `/patches` folder.
 
 Then in `./build` folder there should be 3 binaries:
 
 - `openvpn-musl` for musl libc platforms.
 - `openvpn-glibc` for glibc platforms.
 - `aws-vpn-client`.
+
+### Patch a new OpenVPN version
+
+To generate a patch for a newer OpenVPN version, use the current latest as base:
+
+```shell
+$ FROM_VERSION=<current_latest> TO_VERSION=<upstream_latest> docker compose up gen-patch
+```
+
+The `<upstream_latest>` version can be found at [OpenVPN GitHub tags](https://github.com/OpenVPN/openvpn/tags).
+
+### OpenVPN config file
+
+Make sure you have:
+
+* `remote` option removed.
+* `auth-retry interact` option removed.
+* (Optionally) `inactive 3600` option added.
 
 ## Authenticate and connect to the VPN
 
@@ -113,21 +135,6 @@ before fallback to the default value:
 - `AWS_VPN_ON_CHALLENGE` for `-on-challenge`.
 - `AWS_VPN_VERBOSE` for `-verbose`. This accepts `1, t, T, TRUE, true, True` as `true`, otherwise `false`.
 
-## Automatically resolve challenge URL (experimental feature)
-
-By default, `aws-vpn-client` will run with `-on-challenge=listen`. This means that
-a local server will be spawned on port `35001` to listen for the SAML response from AWS VPN
-(don't worry, that server will be destroyed as soon as it receives the response,
-so no long-lasting service in your background at all).
-
-However, that's cumbersome because the tool itself is not fully automated.
-To solve this, you can try `-on-challenge=auto` with some prerequisites:
-
-- You understand how your authentication server works, ie. how it's doing the authentication part
-  of the `CHALLENGE_URL`. Normally it'll be a piece of `cookie`.
-- Either export or pass the necessary `cookie` value to the env var `CHALLENGE_URL_COOKIE`.
-- Run with `./aws-vpn-client <... other flags> -on-challenge=auto`
-
 # On Arch Linux with `systemd`
 
 Under `arch-linux` folder, there's 2 files that enable Arch Linux users to integrate `aws-vpn-client` with `systemd`:
@@ -159,3 +166,5 @@ $ systemctl --user start aws-vpn-client
 
 The service will be auto-reconnecting (with a delay of 1s) whenever the `connect.sh` fails,
 e.g. when `openvpn` receives `SIGUSR1` from suspend.
+
+# Gen
