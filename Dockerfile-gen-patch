@@ -1,9 +1,9 @@
-FROM alpine:3.17
+FROM alpine:3.19.1
 
 RUN apk add --no-cache \
-    bash=5.2.15-r0 \
-    git=2.38.5-r0 \
-    patch=2.7.6-r9
+    bash=5.2.21-r0 \
+    git=2.43.0-r0 \
+    patch=2.7.6-r10
 
 ARG USER=vpn
 RUN adduser --disabled-password --gecos '' ${USER} \
